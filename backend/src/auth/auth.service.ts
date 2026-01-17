@@ -1,34 +1,35 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { ConflictException, Injectable } from '@nestjs/common';
+import { User } from 'src/users/users.entity';
+import { RegisterDto } from './dto/auth.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AuthHelper } from './auth.helper';
 
-@Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
 
-  async register(data: any) {
-    const hashed = await bcrypt.hash(data.password, 10);
-    return this.usersService.create({
-      ...data,
-      password: hashed,
-    });
-  }
+    private readonly authhelper: AuthHelper
+  ) {}  
+  public async register(body: RegisterDto): Promise<User> {
+    const {email, firstName, lastName, gender, phoneNumber, password} = body;
+    const existingUser = await this.userRepository.findOne({where: {email}}); 
 
-  async login(email: string, password: string) {
-    const user = await this.usersService.findByEmail(email);
-    if (!user) throw new UnauthorizedException();
+    if (existingUser) {
+      throw new ConflictException('User already exists');
+    }
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) throw new UnauthorizedException();
+    const user = new User();
+      user.email = email;
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.gender = gender;
+      user.phoneNumber = phoneNumber;
+      user.password = this.authhelper.encodePassword(password); 
+    
 
-    const payload = { sub: user.id, role: user.role };
 
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return await this.userRepository.save(user);
   }
 }

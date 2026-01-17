@@ -2,22 +2,25 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { User } from './users/users.entity';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
+import { join } from 'path';
+import { getEnvPath } from './common/helper/env.helper';
+
+const parentDir = join(__dirname, '..');
+const envFilePath : string = getEnvPath(parentDir);
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'user_management',
-      entities: [User],
-      synchronize: true,
+      ConfigModule.forRoot({
+      envFilePath,
+      isGlobal: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: TypeOrmConfigService,
     }),
     UsersModule,
-    AuthModule, 
+    AuthModule
   ],
 })
 export class AppModule {}

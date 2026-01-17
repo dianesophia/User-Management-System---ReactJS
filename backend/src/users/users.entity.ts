@@ -1,40 +1,49 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Role } from './enums/role.enum';
+import { Exclude } from 'class-transformer';
+import { Gender } from "./enums/gender.enum";
 
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-}
 
-@Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+@Entity('users')
+export class User extends BaseEntity{
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
-  @Column()
-  name: string;
+    @Column({unique: true})
+    email: string;
 
-  @Column({ unique: true })
-  email: string;
+    @Column()
+    firstName: string;
 
-  @Column()
-  password: string;
+    @Column()
+    lastName: string;
 
-  @Column({
+    @Exclude()
+    @Column()
+    password: string;
+
+    @Column({
     type: 'enum',
-    enum: UserRole,
-    default: UserRole.USER,
-  })
-  role: UserRole;
+    enum: Role,
+    default: Role.USER,
+    })
+    role: Role;
 
-  @CreateDateColumn()
-  createdAt: Date;
+    @Column({
+      type: 'enum',
+      enum: Gender,
+    })
+    gender: Gender;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+    @Column({ default: true })
+    active: boolean;
+
+    @Column({ nullable: true })
+    phoneNumber?: string;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 }
