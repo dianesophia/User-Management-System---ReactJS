@@ -1,18 +1,24 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable,   NotFoundException  } from '@nestjs/common';
 import { User } from 'src/users/users.entity';
-import { RegisterDto } from './dto/auth.dto';
+import { LoginDto, RegisterDto, RefreshTokenDto } from './dto/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthHelper } from './auth.helper';
+import { UserWithToken } from './auth.type';
+import { UserService } from 'src/users/users.service';
 
+
+@Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-    private readonly authhelper: AuthHelper
+    private readonly authhelper: AuthHelper,
+    private readonly userService: UserService,
+    
   ) {}  
-  public async register(body: RegisterDto): Promise<User> {
+  public async register(body: RegisterDto): Promise<UserWithToken> {
     const {email, firstName, lastName, gender, phoneNumber, password} = body;
     const existingUser = await this.userRepository.findOne({where: {email}}); 
 
@@ -30,6 +36,39 @@ export class AuthService {
     
 
 
-    return await this.userRepository.save(user);
+     await this.userRepository.save(user);
+     return this.authhelper.generateToken(user);
+  }
+
+
+  public async login(body: LoginDto): Promise<UserWithToken> {
+    const {email, password} = body;
+    const user = await this.userRepository
+    .createQueryBuilder('user')
+    .where('user.email = :email', {email})
+    .getOne();
+
+    if(!user){
+      throw new NotFoundException('User not found');
+    }
+
+    const isPasswordValid: boolean = this.authhelper.isPasswordValid(password, user.password);
+
+    if(!isPasswordValid){
+      throw new BadRequestException("Login details are incorrect");
+    }
+
+    return this.authhelper.generateToken(user);
+  }
+
+  public async refresh(body: RefreshTokenDto): Promise<UserWithToken> {
+    const { refreshToken } = body;
+    const user = await this.authhelper.getUserFromToken(refreshToken);  
+    return this.authhelper.generateToken(user);
+  }
+
+
+  public logout(): boolean{
+    return true;
   }
 }

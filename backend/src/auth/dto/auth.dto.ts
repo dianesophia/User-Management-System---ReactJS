@@ -37,16 +37,19 @@ export class RegisterDto {
 
 
 export class LoginDto {
-    @IsNotEmpty()
-    @IsEmail()
-    public readonly email: string;
+  @ApiProperty({ example: 'john@example.com', description: 'Email of the user' })
+  @IsEmail()
+  @IsNotEmpty()
+  public readonly email: string;
 
-    @IsString()
-    @IsNotEmpty()
-    public readonly password: string;
+  @ApiProperty({ example: 'StrongPassword123', description: 'Password of the user' })
+  @IsString()
+  @IsNotEmpty()
+  public readonly password: string;
 }
 
 export class RefreshTokenDto {
+    @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...', description: 'Refresh token of the user' })
     @IsString()
     @IsNotEmpty()
     public readonly refreshToken: string;

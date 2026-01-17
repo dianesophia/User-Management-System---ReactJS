@@ -3,8 +3,11 @@ import { Repository } from "typeorm";
 import { User } from '../users/users.entity';
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { UserService } from "src/users/users.service";
+import { access } from "fs";
+import { UserWithToken } from "./auth.type";
 
 @Injectable()
 
@@ -13,12 +16,75 @@ export class AuthHelper{
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
 
-       // private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        private readonly userService: UserService
     ){}
+
+    public async decode(token: string): Promise<unknown>{
+        return this.jwtService.decode(token);
+    }
+
+    public isPasswordValid(password: string, hashedPassword: string): boolean{
+        return bcrypt.compareSync(password, hashedPassword);
+    }
+
 
     public encodePassword(password: string): string{
         const salt = bcrypt.genSaltSync(10);
         return bcrypt.hashSync(password, salt);
     }
+
+
+    public generateToken(user: User): UserWithToken{
+        const assessToken = this.jwtService.sign({
+            id: user.id,
+            email: user.email, 
+
+        });
+
+        const refreshToken = this.jwtService.sign({
+            id: user.id,
+            email: user.email,
+        },{
+            expiresIn: '7d'
+        });
+
+        return {
+            token: {
+                assessToken,
+                refreshToken
+            },
+            user,   
+        }
+    }
+
+    public async validate(token: string): Promise<boolean | never>{
+        const decoded = this.jwtService.verify(token);
+
+        if(!decoded){
+            throw new BadRequestException('Invalid token');
+        }
+
+        const user = await this.userService.getUser(decoded);
+
+        if(!user){
+            throw new UnauthorizedException();
+        }
+
+        return true;
+    }
+
+
+    public async getUserFromToken(token: string): Promise<User>{
+        const decoded = await this.jwtService.verify(token);
+
+        if(!decoded){
+            throw new BadRequestException('Invalid token');
+        }
+
+        const user = await this.userService.getUser(decoded.id);
+        return user;
+    }
+
 }
 
