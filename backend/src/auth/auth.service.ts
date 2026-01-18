@@ -68,7 +68,10 @@ export class AuthService {
   }
 
 
-  public logout(): boolean{
-    return true;
-  }
+  public logout(body?: RefreshTokenDto): boolean {
+  // You could blacklist the refresh token here if needed
+  console.log('Logout body:', body);
+  return true;
+}
+
 }

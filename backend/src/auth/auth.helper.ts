@@ -2,12 +2,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from '../users/users.entity';
 import { JwtService } from "@nestjs/jwt";
-import * as bcrypt from 'bcrypt';
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
-import { UserService } from "src/users/users.service";
-import { access } from "fs";
+import { UserService } from "../users/users.service";
 import { UserWithToken } from "./auth.type";
+import { PasswordUtility } from "../common/password.utility";
 
 @Injectable()
 
@@ -17,7 +15,8 @@ export class AuthHelper{
         private readonly userRepository: Repository<User>,
 
         private readonly jwtService: JwtService,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly passwordUtility: PasswordUtility
     ){}
 
     public async decode(token: string): Promise<unknown>{
@@ -25,13 +24,12 @@ export class AuthHelper{
     }
 
     public isPasswordValid(password: string, hashedPassword: string): boolean{
-        return bcrypt.compareSync(password, hashedPassword);
+        return this.passwordUtility.isPasswordValid(password, hashedPassword);
     }
 
 
     public encodePassword(password: string): string{
-        const salt = bcrypt.genSaltSync(10);
-        return bcrypt.hashSync(password, salt);
+        return this.passwordUtility.encodePassword(password);
     }
 
 

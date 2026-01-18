@@ -1,18 +1,23 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
-import { NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { CreateUserDto, UpdateUserDto } from 'src/auth/dto/users.dto';
+import { PasswordUtility } from 'src/common/password.utility';
 
+
+@Injectable()
 export class UserService {
 
   constructor(
     @InjectRepository(User)
-    private readonly userResponsitory: Repository<User>
+    private readonly userRepository: Repository<User>,
+    private readonly passwordUtility: PasswordUtility
   ){};
 
 
   public async getUser(id: string): Promise<User> {
-    const user = await this.userResponsitory.findOne({
+    const user = await this.userRepository.findOne({
       where: {
         id,
       }
@@ -25,5 +30,49 @@ export class UserService {
     }
 
     return user;
+  }
+
+
+  // Get all users
+  public async findAll(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+
+  // Find one by ID (used internally)
+ public async findOne(id: string): Promise<User> {
+  const user = await this.userRepository.findOne({ where: { id } });
+  if (!user) {
+    throw new NotFoundException(`User with id ${id} not found`);
+  }
+  return user;
+}
+
+  // Create a new user
+  public async create(body: CreateUserDto): Promise<User> {
+    const user = this.userRepository.create({
+      ...body,
+      password: this.passwordUtility.encodePassword(body.password),
+    });
+    return this.userRepository.save(user);
+  }
+
+  // Update user
+  public async update(id: string, body: UpdateUserDto): Promise<User> {
+    const user = await this.findOne(id);
+    if (!user) throw new NotFoundException('User not found');
+
+    if (body.password) {
+      body.password = this.passwordUtility.encodePassword(body.password);
+    }
+
+    Object.assign(user, body);
+    return this.userRepository.save(user);
+  }
+
+  // Remove user
+  public async remove(id: string): Promise<User> {
+    const user = await this.findOne(id);
+    if (!user) throw new NotFoundException('User not found');
+    return this.userRepository.remove(user);
   }
 }
