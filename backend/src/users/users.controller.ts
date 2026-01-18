@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, NotFoundException } from '@nestjs/common';
 import { UserService } from './users.service';
-import { CreateUserDto, UpdateUserDto } from '../auth/dto/users.dto';
+import { CreateUserDto, AdminUpdateDto, UpdateUserDto } from '../auth/dto/users.dto';
 import { JWTAuthGuard } from '../auth/auth.guard';
 import { Roles } from '../auth/roles/roles.decorator';
 import { RolesGuard } from '../auth/roles/roles.guard';
@@ -8,6 +8,7 @@ import { Role } from './enums/role.enum';
 import { ApiBearerAuth } from '@nestjs/swagger/dist/decorators/api-bearer.decorator';
 import { ApiTags } from '@nestjs/swagger/dist/decorators/api-use-tags.decorator';
 import { ApiBody } from '@nestjs/swagger/dist/decorators/api-body.decorator';
+import { Req } from '@nestjs/common';
 
 @Controller('users')
 @ApiTags('Users')
@@ -16,7 +17,7 @@ import { ApiBody } from '@nestjs/swagger/dist/decorators/api-body.decorator';
 export class UsersController {
   constructor(private readonly usersService: UserService) {}
 
-  // ✅ Get all users (Admin only)
+  // Get all users (Admin only)
   @Get()
   @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
@@ -24,7 +25,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // ✅ Get a user by ID (Admin only)
+  // Get a user by ID (Admin only)
   @Get(':id')
   @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
@@ -34,7 +35,7 @@ export class UsersController {
     return user;
   }
 
-  // ✅ Create a new user (Admin only)
+  //Create a new user (Admin only)
   @Post()
   @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
@@ -43,20 +44,35 @@ export class UsersController {
     return this.usersService.create(body);
   }
 
-  // ✅ Update a user (Admin only)
+   //  Update ANY user (Admin only)
   @Put(':id')
-  @UseGuards(JWTAuthGuard, RolesGuard)
-   @ApiBody({ type: UpdateUserDto })
   @Roles(Role.ADMIN)
-  update(@Param('id') id: string, @Body() body: UpdateUserDto) {
+  @ApiBody({ type: AdminUpdateDto })
+  updateUser(
+    @Param('id') id: string,
+    @Body() body: AdminUpdateDto,
+  ) {
     return this.usersService.update(id, body);
   }
 
-  // ✅ Delete a user (Admin only)
+  //  Delete a user (Admin only)
   @Delete(':id')
   @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
+
+  // User updates own profile
+  @Put('me')
+  @UseGuards(JWTAuthGuard, RolesGuard)
+   @ApiBody({ type: UpdateUserDto })
+  
+  update(
+    @Param('id') id: string,
+    @Body() body: UpdateUserDto) 
+    {
+    return this.usersService.update(id, body);
+  }
+
 }
