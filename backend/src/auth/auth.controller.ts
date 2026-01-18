@@ -18,6 +18,8 @@ import { ApiBearerAuth, ApiBody } from "@nestjs/swagger";
 export class AuthController{
   constructor(private readonly authService: AuthService){ }
 
+
+  // registere new user
   @Post('register')
   async register(
     @Body() body: RegisterDto,
@@ -27,7 +29,7 @@ export class AuthController{
   };
 
 
-
+// login endpoint
    @Post('login')
    @HttpCode(HttpStatus.OK)
      @ApiBody({ type: LoginDto })
@@ -38,6 +40,8 @@ export class AuthController{
     return user;
   };
 
+
+  
      @Post('refresh')
    @HttpCode(HttpStatus.OK)
      @ApiBody({ type: RefreshTokenDto })
@@ -48,6 +52,8 @@ export class AuthController{
     return user;
   };
 
+
+  // logout
 @Post('logout')
 @HttpCode(HttpStatus.OK)
 @ApiBody({ type: RefreshTokenDto })
@@ -57,7 +63,7 @@ async logout(@Body() body: RefreshTokenDto) {
 }
 
 
-
+// profile info
   @Get('user')
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)

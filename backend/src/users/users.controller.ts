@@ -8,7 +8,6 @@ import { Role } from './enums/role.enum';
 import { ApiBearerAuth } from '@nestjs/swagger/dist/decorators/api-bearer.decorator';
 import { ApiTags } from '@nestjs/swagger/dist/decorators/api-use-tags.decorator';
 import { ApiBody } from '@nestjs/swagger/dist/decorators/api-body.decorator';
-import { Req } from '@nestjs/common';
 
 @Controller('users')
 @ApiTags('Users')
