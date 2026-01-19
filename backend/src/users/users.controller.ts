@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, NotFoundException, Request } from '@nestjs/common';
 import { UserService } from './users.service';
 import { CreateUserDto, AdminUpdateDto, UpdateUserDto } from '../auth/dto/users.dto';
 import { JWTAuthGuard } from '../auth/auth.guard';
@@ -43,8 +43,20 @@ export class UsersController {
     return this.usersService.create(body);
   }
 
-   //  Update ANY user (Admin only)
+   // User updates own profile 
+  @Put('me')
+  @UseGuards(JWTAuthGuard, RolesGuard)
+  @ApiBody({ type: UpdateUserDto })
+  update(
+    @Request() req: any,
+    @Body() body: UpdateUserDto) 
+    {
+    return this.usersService.update(req.user.id, body);
+  }
+
+  //  Update ANY user (Admin only)
   @Put(':id')
+  @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBody({ type: AdminUpdateDto })
   updateUser(
@@ -60,18 +72,6 @@ export class UsersController {
   @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
-  }
-
-  // User updates own profile
-  @Put('me')
-  @UseGuards(JWTAuthGuard, RolesGuard)
-   @ApiBody({ type: UpdateUserDto })
-  
-  update(
-    @Param('id') id: string,
-    @Body() body: UpdateUserDto) 
-    {
-    return this.usersService.update(id, body);
   }
 
 }

@@ -39,79 +39,92 @@ export class CreateUserDto {
     @IsNotEmpty()
     @MinLength(8)
     public readonly password: string;
+
+    @ApiProperty({ example: '123 Main St, City, State 12345', description: 'Address of the user' })
+    @IsString()
+    @IsNotEmpty()
+    public readonly address: string;
 }
 
 export class UpdateUserDto {
-   @ApiProperty({ example: 'John', description: 'First name of the user' })
-    @IsString()
-    @IsNotEmpty()
-    public firstName: string;
-  
-    @ApiProperty({ example: 'Doe', description: 'Last name of the user' })
-    @IsString()
-    @IsNotEmpty()
-    public lastName: string;
-  
-    @ApiProperty({ example: '09123456789', description: 'Phone number of the user' })
-    @IsString()
-    @IsNotEmpty()
-    public phoneNumber: string;
-  
-    @ApiProperty({ example: 'male', enum: Gender })
-    @IsEnum(Gender)
-    @IsNotEmpty()
-    public gender: Gender;
-  
-    @ApiProperty({ example: 'john@example.com', description: 'Email of the user' })
-    @IsEmail()
-    @IsNotEmpty()
-    public email: string;
-  
-    @ApiProperty({ example: 'StrongPassword123', description: 'Password of the user' })
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(8)
-    public password: string;
+  // All fields are optional for self-updates (users can update only what they want)
+  @ApiProperty({ example: 'John', description: 'First name of the user' })
+  @IsString()
+  @IsOptional()
+  public firstName?: string;
 
+  @ApiProperty({ example: 'Doe', description: 'Last name of the user' })
+  @IsString()
+  @IsOptional()
+  public lastName?: string;
 
+  @ApiProperty({ example: '09123456789', description: 'Phone number of the user' })
+  @IsString()
+  @IsOptional()
+  public phoneNumber?: string;
+
+  @ApiProperty({ example: 'male', enum: Gender })
+  @IsEnum(Gender)
+  @IsOptional()
+  public gender?: Gender;
+
+  @ApiProperty({ example: 'john@example.com', description: 'Email of the user' })
+  @IsEmail()
+  @IsOptional()
+  public email?: string;
+
+  @ApiProperty({ example: 'StrongPassword123', description: 'Password of the user' })
+  @IsString()
+  @IsOptional()
+  @MinLength(8)
+  public password?: string;
+
+  @ApiProperty({ example: '123 Main St, City, State 12345', description: 'Address of the user' })
+  @IsString()
+  @IsOptional()
+  public address?: string;
 }
 
 export class AdminUpdateDto {
+  // Admin can update any field, but all should be optional for PATCH operations
+  @ApiProperty({ example: 'John', description: 'First name of the user' })
+  @IsString()
+  @IsOptional()
+  public firstName?: string;
 
-@ApiProperty({ example: 'John', description: 'First name of the user' })
-    @IsString()
-    @IsNotEmpty()
-    public firstName: string;
-  
-    @ApiProperty({ example: 'Doe', description: 'Last name of the user' })
-    @IsString()
-    @IsNotEmpty()
-    public lastName: string;
-  
-    @ApiProperty({ example: '09123456789', description: 'Phone number of the user' })
-    @IsString()
-    @IsNotEmpty()
-    public phoneNumber: string;
-  
-    @ApiProperty({ example: 'male', enum: Gender })
-    @IsEnum(Gender)
-    @IsNotEmpty()
-    public gender: Gender;
-  
-    @ApiProperty({ example: 'john@example.com', description: 'Email of the user' })
-    @IsEmail()
-    @IsNotEmpty()
-    public email: string;
-  
-    @ApiProperty({ example: 'StrongPassword123', description: 'Password of the user' })
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(8)
-    public password: string;
+  @ApiProperty({ example: 'Doe', description: 'Last name of the user' })
+  @IsString()
+  @IsOptional()
+  public lastName?: string;
 
+  @ApiProperty({ example: '09123456789', description: 'Phone number of the user' })
+  @IsString()
+  @IsOptional()
+  public phoneNumber?: string;
 
-   @ApiProperty({ example: 'user', enum: Role })
-    @IsEnum(Role)
-    @IsNotEmpty()
-    public readonly role: Role;
+  @ApiProperty({ example: 'male', enum: Gender })
+  @IsEnum(Gender)
+  @IsOptional()
+  public gender?: Gender;
+
+  @ApiProperty({ example: 'john@example.com', description: 'Email of the user' })
+  @IsEmail()
+  @IsOptional()
+  public email?: string;
+
+  @ApiProperty({ example: 'StrongPassword123', description: 'Password of the user' })
+  @IsString()
+  @IsOptional()
+  @MinLength(8)
+  public password?: string;
+
+  @ApiProperty({ example: 'user', enum: Role })
+  @IsEnum(Role)
+  @IsOptional()
+  public role?: Role;
+
+  @ApiProperty({ example: '123 Main St, City, State 12345', description: 'Address of the user' })
+  @IsString()
+  @IsOptional()
+  public address?: string;
 }

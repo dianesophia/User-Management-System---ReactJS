@@ -34,22 +34,23 @@ export class AuthHelper{
 
 
     public generateToken(user: User): UserWithToken{
-        const assessToken = this.jwtService.sign({
+        const accessToken = this.jwtService.sign({
             id: user.id,
-            email: user.email, 
-
+            email: user.email,
+            role: user.role,
         });
 
         const refreshToken = this.jwtService.sign({
             id: user.id,
             email: user.email,
+            role: user.role,
         },{
             expiresIn: '7d'
         });
 
         return {
             token: {
-                assessToken,
+                accessToken,
                 refreshToken
             },
             user,   

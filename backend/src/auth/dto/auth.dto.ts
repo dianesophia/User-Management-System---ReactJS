@@ -18,6 +18,12 @@ export class RegisterDto {
   @IsNotEmpty()
   public readonly phoneNumber: string;
 
+  @ApiProperty({ example: 'Cebu', description: 'Address of the user' })
+  @IsString()
+  @IsNotEmpty()
+  @MinLength(8)
+  public readonly address: string;
+
   @ApiProperty({ example: 'male', enum: Gender })
   @IsEnum(Gender)
   @IsNotEmpty()

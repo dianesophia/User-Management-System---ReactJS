@@ -19,7 +19,7 @@ export class AuthService {
     
   ) {}  
   public async register(body: RegisterDto): Promise<UserWithToken> {
-    const {email, firstName, lastName, gender, phoneNumber, password} = body;
+    const {email, firstName, lastName, gender, phoneNumber, address, password} = body;
     const existingUser = await this.userRepository.findOne({where: {email}}); 
 
     if (existingUser) {
@@ -32,6 +32,7 @@ export class AuthService {
       user.lastName = lastName;
       user.gender = gender;
       user.phoneNumber = phoneNumber;
+      user.address = address;
       user.password = this.authhelper.encodePassword(password); 
     
 
@@ -68,10 +69,9 @@ export class AuthService {
   }
 
 
-  public logout(body?: RefreshTokenDto): boolean {
-  // You could blacklist the refresh token here if needed
-  console.log('Logout body:', body);
-  return true;
-}
+  public async logout(): Promise<{ message: string }> {
+    // You could blacklist the refresh token here if needed
+    return { message: 'Logged out successfully' };
+  }
 
 }

@@ -54,13 +54,12 @@ export class AuthController{
 
 
   // logout
-@Post('logout')
-@HttpCode(HttpStatus.OK)
-@ApiBody({ type: RefreshTokenDto })
-async logout(@Body() body: RefreshTokenDto) {
-  const result = await this.authService.logout();
-  return result;
-}
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout() {
+    const result = await this.authService.logout();
+    return result;
+  }
 
 
 // profile info

@@ -1,4 +1,4 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 import { Role } from './enums/role.enum';
 import { Exclude } from 'class-transformer';
 import { Gender } from "./enums/gender.enum";
@@ -35,15 +35,20 @@ export class User extends BaseEntity{
     })
     gender: Gender;
 
-    @Column({ default: true })
-    active: boolean;
-
     @Column({ nullable: true })
     phoneNumber?: string;
+
+    @Column()
+    address: string;
+
+    // Soft delete - tracks deletion timestamp instead of hard delete
+    @DeleteDateColumn({ nullable: true })
+    deletedAt: Date | null;
 
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
+
 }
