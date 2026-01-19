@@ -70,7 +70,6 @@ export class AuthService {
 
 
   public async logout(): Promise<{ message: string }> {
-    // You could blacklist the refresh token here if needed
     return { message: 'Logged out successfully' };
   }
 

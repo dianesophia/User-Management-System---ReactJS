@@ -17,7 +17,6 @@ export class UserService {
 
 
   public async getUser(id: string): Promise<User> {
-    // Query excludes soft-deleted users automatically
     const user = await this.userRepository.findOne({
       where: {
         id,
@@ -34,12 +33,12 @@ export class UserService {
   }
 
 
-  // Get all users (excludes soft-deleted users)
+
   public async findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
 
-  // Find one by ID (used internally) - excludes soft-deleted users
+ 
  public async findOne(id: string): Promise<User> {
   const user = await this.userRepository.findOne({ where: { id } });
   if (!user) {
@@ -48,7 +47,7 @@ export class UserService {
   return user;
 }
 
-  // Create a new user
+  // new user
   public async create(body: CreateUserDto): Promise<User> {
     const user = this.userRepository.create({
       ...body,
@@ -70,21 +69,15 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-
-  
-
-  // Remove user - uses soft delete instead of hard delete
+// Soft delete 
   public async remove(id: string): Promise<User> {
-    // First verify user exists and is not already deleted
+
     const user = await this.findOne(id);
     if (!user) {
       throw new NotFoundException('User not found');
-    }
-
-    // Use soft delete - marks deletedAt timestamp
+    } 
     await this.userRepository.softDelete(id);
     
-    // Return the user object (though it's now soft-deleted)
     return user;
   }
 

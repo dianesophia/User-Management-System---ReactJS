@@ -13,7 +13,6 @@ export class AuthHelper{
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
-
         private readonly jwtService: JwtService,
         private readonly userService: UserService,
         private readonly passwordUtility: PasswordUtility

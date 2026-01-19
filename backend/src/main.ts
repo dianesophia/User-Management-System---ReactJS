@@ -27,7 +27,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
 
-  // Global validation pipes
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -36,7 +36,7 @@ async function bootstrap() {
     }),
   );
 
-  // Get port from env or default to 3000
+
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3000;
 

@@ -34,7 +34,7 @@ export class UsersController {
     return user;
   }
 
-  //Create a new user (Admin only)
+  //new user (Admin only)
   @Post()
   @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
@@ -43,7 +43,7 @@ export class UsersController {
     return this.usersService.create(body);
   }
 
-   // User updates own profile 
+   // updates profile 
   @Put('me')
   @UseGuards(JWTAuthGuard, RolesGuard)
   @ApiBody({ type: UpdateUserDto })
@@ -54,7 +54,7 @@ export class UsersController {
     return this.usersService.update(req.user.id, body);
   }
 
-  //  Update ANY user (Admin only)
+  //  Update user (Admin only)
   @Put(':id')
   @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
@@ -66,7 +66,7 @@ export class UsersController {
     return this.usersService.update(id, body);
   }
 
-  //  Delete a user (Admin only)
+  //  delete user (Admin only)
   @Delete(':id')
   @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)

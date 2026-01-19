@@ -41,7 +41,6 @@ export class User extends BaseEntity{
     @Column()
     address: string;
 
-    // Soft delete - tracks deletion timestamp instead of hard delete
     @DeleteDateColumn({ nullable: true })
     deletedAt: Date | null;
 
