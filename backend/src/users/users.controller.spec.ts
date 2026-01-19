@@ -9,10 +9,11 @@ describe('UsersController', () => {
       controllers: [UsersController],
     }).compile();
 
+
     controller = module.get<UsersController>(UsersController);
   });
 
-  it('should be defined', () => {
+  it('Should be defined', () => {
     expect(controller).toBeDefined();
   });
 });

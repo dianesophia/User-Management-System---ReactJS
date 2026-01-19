@@ -39,6 +39,7 @@ export class AuthHelper{
             role: user.role,
         });
 
+        
         const refreshToken = this.jwtService.sign({
             id: user.id,
             email: user.email,

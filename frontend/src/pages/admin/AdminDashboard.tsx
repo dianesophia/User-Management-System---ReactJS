@@ -169,7 +169,7 @@ export const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 px-6 py-10">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
+       
         <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-4xl font-bold text-slate-800">

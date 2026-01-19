@@ -8,7 +8,7 @@ export const api = axios.create({
   },
 });
 
-// Request interceptor - add JWT token
+
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem("accessToken");
   if (token && config.headers) {
@@ -17,7 +17,6 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// Response interceptor - handle 401 and refresh token
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
@@ -40,12 +39,11 @@ api.interceptors.response.use(
         localStorage.setItem("accessToken", token.accessToken);
         localStorage.setItem("refreshToken", token.refreshToken);
         localStorage.setItem("role", user.role);
-        localStorage.setItem("userId", user.id); // Preserve userId on token refresh
+        localStorage.setItem("userId", user.id); 
 
         originalRequest.headers.Authorization = `Bearer ${token.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - clear session and redirect to login
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("role");

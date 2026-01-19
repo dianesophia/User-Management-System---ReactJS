@@ -69,6 +69,7 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
+  
 // Soft delete 
   public async remove(id: string): Promise<User> {
 

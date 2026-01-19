@@ -54,10 +54,10 @@ export const Register = () => {
 
       const res = await AuthService.register(payload);
 
-      // Store session after successful registration
+
       authStore.setSession(res);
 
-      // Navigate based on role
+
       if (res.user.role === "admin") {
         navigate("/admin");
       } else {
