@@ -19,11 +19,10 @@ describe('UsersController (CRUD)', () => {
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
 
-    // Clear users table before tests
     const dataSource = app.get(DataSource);
     await dataSource.query('DELETE FROM users');
 
-    // ✅ Register admin account
+    //  Register admin account
     const registerRes = await request(app.getHttpServer())
       .post('/auth/register')
       .send({
@@ -37,7 +36,7 @@ describe('UsersController (CRUD)', () => {
       })
       .expect(201);
 
-    // ✅ Login admin to get JWT
+    // Login admin to get JWT
     const loginRes = await request(app.getHttpServer())
       .post('/auth/login')
       .send({ email: 'admin@example.com', password: 'admin12345' })
@@ -46,7 +45,7 @@ describe('UsersController (CRUD)', () => {
     jwtToken = loginRes.body.token.accessToken;
   });
 
-  // ✅ CREATE user
+  //  CREATE user
   it('should create a new user', async () => {
     const res = await request(app.getHttpServer())
       .post('/users')
@@ -67,7 +66,7 @@ describe('UsersController (CRUD)', () => {
     expect(res.body.email).toBe(testEmail);
   });
 
-  // ✅ READ all users
+  //  READ all users
   it('should get all users', async () => {
     const res = await request(app.getHttpServer())
       .get('/users')
@@ -77,7 +76,7 @@ describe('UsersController (CRUD)', () => {
     expect(Array.isArray(res.body)).toBe(true);
   });
 
-  // ✅ READ one user by ID
+  // READ one user by ID
   it('should get a user by id', async () => {
     const res = await request(app.getHttpServer())
       .get(`/users/${createdUserId}`)
@@ -87,7 +86,7 @@ describe('UsersController (CRUD)', () => {
     expect(res.body.id).toBe(createdUserId);
   });
 
-  // ✅ UPDATE user
+  //  UPDATE user
   it('should update a user', async () => {
     const res = await request(app.getHttpServer())
       .put(`/users/${createdUserId}`)
@@ -98,7 +97,7 @@ describe('UsersController (CRUD)', () => {
     expect(res.body.firstName).toBe('UpdatedName');
   });
 
-  // ✅ DELETE user
+  //  DELETE user
   it('should delete a user', async () => {
     await request(app.getHttpServer())
       .delete(`/users/${createdUserId}`)
