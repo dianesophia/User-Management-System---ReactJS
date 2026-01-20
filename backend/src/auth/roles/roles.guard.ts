@@ -7,15 +7,36 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.get<Role[]>('roles', context.getHandler());
-    if (!requiredRoles) return true; 
+    // Check both method and class level for @Roles() decorator
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>('roles', [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    
+    // If no roles are required, allow access
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
+    }
 
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    if (!user || !requiredRoles.includes(user.role)) {
-      throw new ForbiddenException('You do not have permission to access this resource');
+    // Ensure user exists and has a role
+    if (!user) {
+      throw new ForbiddenException('User not authenticated');
     }
+
+    if (!user.role) {
+      throw new ForbiddenException('User role not found');
+    }
+
+    // Check if user's role is in the required roles
+    const hasRole = requiredRoles.includes(user.role);
+    
+    if (!hasRole) {
+      throw new ForbiddenException(`Access denied. Required role(s): ${requiredRoles.join(', ')}`);
+    }
+
     return true;
   }
 }

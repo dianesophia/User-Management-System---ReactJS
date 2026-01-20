@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { AuthHelper } from './auth.helper';
 import { UserWithToken } from './auth.type';
 import { UserService } from 'src/users/users.service';
+import { Role } from 'src/users/enums/role.enum';
 
 
 @Injectable()
@@ -35,6 +36,8 @@ export class AuthService {
       user.address = address;
       user.password = this.authhelper.encodePassword(password); 
     
+      user.role = email === 'admin@example.com' ? Role.ADMIN : Role.USER;
+
 
 
      await this.userRepository.save(user);

@@ -18,7 +18,6 @@ export class UsersController {
 
   // Get all users (Admin only)
   @Get()
-  @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   findAll() {
     return this.usersService.findAll();
@@ -26,7 +25,6 @@ export class UsersController {
 
   // Get a user by ID (Admin only)
   @Get(':id')
-  @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
@@ -36,16 +34,14 @@ export class UsersController {
 
   //new user (Admin only)
   @Post()
-  @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-    @ApiBody({ type: CreateUserDto })
+  @ApiBody({ type: CreateUserDto })
   create(@Body() body: CreateUserDto) {
     return this.usersService.create(body);
   }
 
-   // updates profile 
+   // updates profile (any authenticated user can update their own profile)
   @Put('me')
-  @UseGuards(JWTAuthGuard, RolesGuard)
   @ApiBody({ type: UpdateUserDto })
   update(
     @Request() req: any,
@@ -56,7 +52,6 @@ export class UsersController {
 
   //  Update user (Admin only)
   @Put(':id')
-  @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBody({ type: AdminUpdateDto })
   updateUser(
@@ -68,7 +63,6 @@ export class UsersController {
 
   //  delete user (Admin only)
   @Delete(':id')
-  @UseGuards(JWTAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);

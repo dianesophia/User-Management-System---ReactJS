@@ -27,7 +27,14 @@ export class JwtStrategy extends PassportStrategy(Strategy){
     }
 
     async validate(payload: any): Promise<User>{
-        console.log("testing")
-        return  await this.userService.getUser(payload.id);
+        // Fetch user from database with all fields including role
+        const user = await this.userService.getUser(payload.id);
+        
+        if (!user) {
+            throw new BadRequestException('User not found');
+        }
+        
+        // This user object (with role) will be attached to request.user
+        return user;
     }
 }
