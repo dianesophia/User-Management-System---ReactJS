@@ -171,6 +171,7 @@ The project uses **Jest** for unit and integration testing.
 
 ```bash
 cd backend
+   ```
 
 # Run all tests
 npm test
