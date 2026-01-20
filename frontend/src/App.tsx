@@ -6,6 +6,7 @@ import { UserDashboard } from "./pages/user/UserDashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
 
+
 function App() {
   return (
     <AuthProvider>
@@ -31,6 +32,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+            
         </Routes>
       </BrowserRouter>
     </AuthProvider>

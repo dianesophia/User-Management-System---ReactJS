@@ -11,6 +11,7 @@ export interface User {
   role: "admin" | "user";
   gender: "male" | "female" | "other";
   phoneNumber?: string;
+  password?: string;
   address? : string;
   createdAt: string;
   updatedAt: string;
